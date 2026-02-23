@@ -95,46 +95,35 @@ h1{
 
 <script>
 
-const sheetID = "2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp";
-const sheetURL = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json`;
+const sheetID = "1Zs4ObXWH_GUxaRNjf2OXXK9OIJdpXQdvpQqhj-Y8LXw";
 
-let chart;
-
-async function fetchData(){
-  try{
-    document.getElementById("sync-status").innerHTML="🔄 Sincronizando...";
-
-    const res = await fetch(sheetURL);
+async function fetchData() {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+    
+    const res = await fetch(url);
     const text = await res.text();
 
     const json = JSON.parse(text.substring(47).slice(0, -2));
     const rows = json.table.rows;
 
-    const data = rows.map(r=>({
-      likes: r.c[0]?.v || 0,
-      saves: r.c[1]?.v || 0,
-      shares: r.c[2]?.v || 0,
-      comments: r.c[3]?.v || 0,
-      views: r.c[4]?.v || 0,
-      followers: r.c[5]?.v || 0,
-      reach: r.c[6]?.v || 0,
-      clicks: r.c[7]?.v || 0
+    data = rows.map(r => ({
+      date: r.c[0]?.v || "",
+      likes: r.c[1]?.v || 0,
+      saves: r.c[2]?.v || 0,
+      shares: r.c[3]?.v || 0,
+      comments: r.c[4]?.v || 0,
+      profileViews: r.c[5]?.v || 0,
+      followers: r.c[6]?.v || 0,
+      reach: r.c[7]?.v || 0
     }));
 
-    const last = data[data.length-1];
+    render();
+    setStatus("Sincronizado ✅");
 
-    document.getElementById("followers").innerText = last.followers;
-    document.getElementById("shares").innerText = last.shares;
-    document.getElementById("views").innerText = last.views;
-    document.getElementById("reach").innerText = last.reach;
-
-    renderChart(data);
-
-    document.getElementById("sync-status").innerHTML="🟢 Atualizado";
-
-  }catch(e){
-    document.getElementById("sync-status").innerHTML="❌ Erro na sincronização";
-    console.error(e);
+  } catch (err) {
+    console.error(err);
+    setStatus("Erro na sincronização ❌");
   }
 }
 
