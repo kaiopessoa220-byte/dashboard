@@ -128,15 +128,16 @@ async function fetchData(){
   }
 }
 
-function render(){
-  if(!data.length) return;
+function render() {
+  if (!data.length) return;
 
-  const last = data[data.length - 1];
+  // pega última linha que tenha seguidores > 0
+  const lastValid = [...data].reverse().find(d => d.followers > 0) || data[data.length - 1];
 
-  document.getElementById("followers").innerText = last.followers;
-  document.getElementById("shares").innerText = last.shares;
-  document.getElementById("views").innerText = last.views;
-  document.getElementById("reach").innerText = last.reach;
+  document.getElementById("followers").innerText = lastValid.followers || 0;
+  document.getElementById("shares").innerText = lastValid.shares || 0;
+  document.getElementById("views").innerText = lastValid.views || 0;
+  document.getElementById("reach").innerText = lastValid.reach || 0;
 }
 
 fetchData();
