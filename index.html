@@ -124,28 +124,38 @@ let data = [];
 let chart;
 
 async function fetchData(){
-  try{
-    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(sheetURL));
+  try {
+    const res = await fetch(sheetURL);
+
+    if(!res.ok) throw new Error("Erro HTTP");
+
     const text = await res.text();
     const rows = text.split("\n").slice(1);
 
-    data = rows.map((r, index)=>{
+    data = rows.map(r=>{
       const cols = r.split(",");
-
       return {
-        date: "Dia " + (index + 1),
-        likes: Number(cols[0]) || 0,
-        saves: Number(cols[1]) || 0,
-        shares: Number(cols[2]) || 0,
-        comments: Number(cols[3]) || 0,
-        views: Number(cols[4]) || 0,
-        followers: Number(cols[5]) || 0,
-        reach: Number(cols[6]) || 0,
-        clicks: Number(cols[7]) || 0
-      };
-    }).filter(d => d.views || d.shares || d.followers);
+        likes: +cols[0] || 0,
+        saves: +cols[1] || 0,
+        shares: +cols[2] || 0,
+        comments: +cols[3] || 0,
+        views: +cols[4] || 0,
+        followers: +cols[5] || 0,
+        reach: +cols[6] || 0,
+        clicks: +cols[7] || 0
+      }
+    }).filter(d => Object.values(d).some(v => v !== 0));
 
     render();
+
+    // limpa mensagem de erro se deu certo
+    document.getElementById("sync-status").innerHTML = "🟢 Atualizado";
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("sync-status").innerHTML = "❌ Erro na sincronização";
+  }
+}
 
     document.querySelector(".status").innerHTML =
       "🟢 Atualizado às " + new Date().toLocaleTimeString();
