@@ -149,6 +149,7 @@ th, td { padding:10px; border-bottom:1px solid var(--border); text-align:left; }
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv";
 const AUTO_REFRESH_MS = 60000;
+
 let lastFingerprint = "";
 let data = [];
 
@@ -174,39 +175,48 @@ async function fetchCSV(){
     const res = await fetch(CSV_URL);
     const text = await res.text();
     const fingerprint = text.trim();
+
     if(fingerprint !== lastFingerprint){
       lastFingerprint = fingerprint;
       parseCSV(text);
       showToast("✅ Dados atualizados da planilha!");
     }
-    updateSync("Atualizado às "+ new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}));
+
+    updateSync("Atualizado às "+ 
+      new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}));
+
   }catch(e){
     updateSync("Erro na sincronização","error");
   }
 }
 
 function parseCSV(text){
-  const rows = text.split("\n").slice(1);
+  const rows = text.split("\n").slice(1); // remove header
   data = [];
-  rows.forEach(r=>{
+
+  rows.forEach((r,index)=>{
     const c = r.split(",");
-    if(c.length<8) return;
+    if(c.length < 8) return;
+
     data.push({
-      date:c[0],
-      likes:+c[1]||0,
-      saves:+c[2]||0,
-      shares:+c[3]||0,
-      comments:+c[4]||0,
-      views:+c[5]||0,
-      followers:+c[6]||0,
-      reach:+c[7]||0
+      date: "Dia " + (index + 1),
+      likes: +c[0] || 0,
+      saves: +c[1] || 0,
+      shares: +c[2] || 0,
+      comments: +c[3] || 0,
+      views: +c[4] || 0,
+      followers: +c[5] || 0,
+      reach: +c[6] || 0,
+      clicks: +c[7] || 0
     });
   });
+
   render();
 }
 
 function render(){
   if(!data.length) return;
+
   const last = data[data.length-1];
   const total = k => data.reduce((s,d)=>s+d[k],0);
 
@@ -216,7 +226,8 @@ function render(){
   document.getElementById("s-saves").textContent = total("saves");
 
   const table = document.getElementById("table");
-  table.innerHTML = "<tr><th>Data</th><th>Likes</th><th>Salv.</th><th>Seg.</th></tr>";
+  table.innerHTML = "<tr><th>Dia</th><th>Likes</th><th>Salv.</th><th>Seg.</th></tr>";
+
   data.forEach(d=>{
     table.innerHTML += `<tr>
       <td>${d.date}</td>
