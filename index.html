@@ -5,81 +5,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nuvant Performance</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Remove erro de favicon -->
+<link rel="icon" href="data:,">
 
 <style>
 body {
-  font-family: 'Inter', sans-serif;
-  background: #e9e3dc;
   margin: 0;
+  font-family: Arial, sans-serif;
+  background: #dcd6cf;
+}
+
+.container {
   padding: 40px;
 }
 
 h1 {
-  font-size: 38px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .cards {
   display: flex;
-  gap: 20px;
+  gap: 25px;
   flex-wrap: wrap;
 }
 
 .card {
-  background: #fff;
-  border-radius: 20px;
+  background: #f3f3f3;
   padding: 25px;
-  width: 250px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border-radius: 20px;
+  width: 220px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .card h3 {
   margin: 0;
   font-size: 16px;
-  color: #777;
-  font-weight: 600;
+  color: #555;
 }
 
 .card p {
   font-size: 32px;
   margin: 10px 0 0;
-  font-weight: 700;
+  font-weight: bold;
 }
 
-#status {
+.status {
   position: absolute;
-  top: 40px;
+  top: 20px;
   right: 40px;
   font-size: 14px;
 }
 </style>
 </head>
-
 <body>
 
-<h1>Nuvant Performance</h1>
-<div id="status">Sincronizando...</div>
+<div class="status" id="status">Sincronizando...</div>
 
-<div class="cards">
-  <div class="card">
-    <h3>Seguidores</h3>
-    <p id="followers">-</p>
-  </div>
+<div class="container">
+  <h1>Nuvant Performance</h1>
 
-  <div class="card">
-    <h3>Compartilhamentos</h3>
-    <p id="shares">-</p>
-  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Seguidores</h3>
+      <p id="followers">-</p>
+    </div>
 
-  <div class="card">
-    <h3>Visualizações Perfil</h3>
-    <p id="views">-</p>
-  </div>
+    <div class="card">
+      <h3>Compartilhamentos</h3>
+      <p id="shares">-</p>
+    </div>
 
-  <div class="card">
-    <h3>Contas Alcançadas</h3>
-    <p id="reach">-</p>
+    <div class="card">
+      <h3>Visualizações Perfil</h3>
+      <p id="views">-</p>
+    </div>
+
+    <div class="card">
+      <h3>Contas Alcançadas</h3>
+      <p id="reach">-</p>
+    </div>
   </div>
 </div>
 
@@ -88,60 +92,59 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1p
 
 let data = [];
 
-function setStatus(text, error=false){
+function setStatus(text) {
   const el = document.getElementById("status");
-  if(!el) return;
-  el.innerText = text;
-  el.style.color = error ? "red" : "black";
+  if (el) el.innerText = text;
 }
 
-async function fetchData(){
+async function fetchData() {
   try {
     setStatus("Sincronizando...");
 
-    const res = await fetch(sheetURL);
-    const text = await res.text();
+    const response = await fetch(sheetURL);
+    const text = await response.text();
 
-    const rows = text.split("\n").slice(1);
+    const rows = text.trim().split("\n").slice(1);
 
-    data = rows.map(r=>{
-      const cols = r.split(",");
+    data = rows.map(row => {
+      const cols = row.split(",");
 
       return {
-        date: cols[0],
-        likes: +cols[1] || 0,
-        saves: +cols[2] || 0,
-        shares: +cols[3] || 0,
-        comments: +cols[4] || 0,
-        views: +cols[5] || 0,
-        followers: +cols[6] || 0,
-        reach: +cols[7] || 0
+        likes: +cols[0] || 0,
+        saves: +cols[1] || 0,
+        shares: +cols[2] || 0,
+        comments: +cols[3] || 0,
+        views: +cols[4] || 0,
+        followers: +cols[5] || 0,
+        reach: +cols[6] || 0,
+        clicks: +cols[7] || 0
       };
-    }).filter(d=>d.date);
+    }).filter(d => Object.values(d).some(v => v !== 0));
 
     render();
-    setStatus("Sincronizado ✓");
+    setStatus("Atualizado ✅");
 
-  } catch (error){
+  } catch (error) {
     console.error(error);
-    setStatus("Erro na sincronização", true);
+    setStatus("Erro na sincronização ❌");
   }
 }
 
 function render() {
   if (!data.length) return;
 
-  // pega última linha que tenha seguidores > 0
-  const lastValid = [...data].reverse().find(d => d.followers > 0) || data[data.length - 1];
+  const last = data[data.length - 1];
 
-  document.getElementById("followers").innerText = lastValid.followers || 0;
-  document.getElementById("shares").innerText = lastValid.shares || 0;
-  document.getElementById("views").innerText = lastValid.views || 0;
-  document.getElementById("reach").innerText = lastValid.reach || 0;
+  document.getElementById("followers").innerText = last.followers;
+  document.getElementById("shares").innerText = last.shares;
+  document.getElementById("views").innerText = last.views;
+  document.getElementById("reach").innerText = last.reach;
 }
 
 fetchData();
-setInterval(fetchData, 60000);
+
+// Atualiza automaticamente a cada 30 segundos
+setInterval(fetchData, 30000);
 </script>
 
 </body>
