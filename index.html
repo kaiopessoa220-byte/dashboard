@@ -147,109 +147,36 @@ th, td { padding:10px; border-bottom:1px solid var(--border); text-align:left; }
 <div class="toast" id="toast"></div>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv";
-const AUTO_REFRESH_MS = 60000;
-
-let lastFingerprint = "";
-let data = [];
-
-function showToast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),3000);
-}
-
-function updateSync(text,state="ok"){
-  const dot=document.getElementById("sync-dot");
-  const label=document.getElementById("sync-text");
-  dot.classList.remove("syncing","error");
-  if(state==="syncing") dot.classList.add("syncing");
-  if(state==="error") dot.classList.add("error");
-  label.textContent=text;
-}
-
-async function fetchCSV(){
-  updateSync("Sincronizando…","syncing");
-  try{
-    const res = await fetch(CSV_URL);
-    const text = await res.text();
-    const fingerprint = text.trim();
-
-    if(fingerprint !== lastFingerprint){
-      lastFingerprint = fingerprint;
-      parseCSV(text);
-      showToast("✅ Dados atualizados da planilha!");
-    }
-
-    updateSync("Atualizado às "+ 
-      new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}));
-
-  }catch(e){
-    updateSync("Erro na sincronização","error");
-  }
-}
-
 function parseCSV(text){
-  const rows = text.split("\n").slice(1); // remove header
+  const rows = text.trim().split(/\r?\n/);
   data = [];
 
-  rows.forEach((r,index)=>{
-    const c = r.split(",");
-    if(c.length < 8) return;
+  // Remove cabeçalho
+  rows.shift();
+
+  rows.forEach((row, index) => {
+    // Divide respeitando vírgulas dentro de aspas
+    const cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+    if(!cols || cols.length < 8) return;
+
+    // Remove aspas e espaços
+    const c = cols.map(v => v.replace(/"/g,'').trim());
 
     data.push({
       date: "Dia " + (index + 1),
-      likes: +c[0] || 0,
-      saves: +c[1] || 0,
-      shares: +c[2] || 0,
-      comments: +c[3] || 0,
-      views: +c[4] || 0,
-      followers: +c[5] || 0,
-      reach: +c[6] || 0,
-      clicks: +c[7] || 0
+      likes: Number(c[0]) || 0,
+      saves: Number(c[1]) || 0,
+      shares: Number(c[2]) || 0,
+      comments: Number(c[3]) || 0,
+      views: Number(c[4]) || 0,
+      followers: Number(c[5]) || 0,
+      reach: Number(c[6]) || 0,
+      clicks: Number(c[7]) || 0
     });
   });
 
   render();
 }
-
-function render(){
-  if(!data.length) return;
-
-  const last = data[data.length-1];
-  const total = k => data.reduce((s,d)=>s+d[k],0);
-
-  document.getElementById("s-seg").textContent = last.followers;
-  document.getElementById("s-reach").textContent = total("reach");
-  document.getElementById("s-likes").textContent = total("likes");
-  document.getElementById("s-saves").textContent = total("saves");
-
-  const table = document.getElementById("table");
-  table.innerHTML = "<tr><th>Dia</th><th>Likes</th><th>Salv.</th><th>Seg.</th></tr>";
-
-  data.forEach(d=>{
-    table.innerHTML += `<tr>
-      <td>${d.date}</td>
-      <td>${d.likes}</td>
-      <td>${d.saves}</td>
-      <td>${d.followers}</td>
-    </tr>`;
-  });
-}
-
-function exportCSV(){
-  const blob = new Blob([lastFingerprint], {type:"text/csv"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "dados.csv";
-  a.click();
-}
-
-window.addEventListener("load",()=>{
-  fetchCSV();
-  setInterval(fetchCSV,AUTO_REFRESH_MS);
-});
 </script>
 
 </body>
