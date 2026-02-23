@@ -160,39 +160,44 @@ async function fetchData(){
 function render(){
   if(!data.length) return;
 
-  const last = data[data.length-1];
+  const last = data[data.length - 1];
 
-  const totalShares = data.reduce((s,d)=>s+d.shares,0);
-  const totalViews = data.reduce((s,d)=>s+d.views,0);
+  // 🔹 Cards principais (AGORA PEGANDO O ÚLTIMO DIA)
+  document.getElementById('s-seg').textContent   = last.followers || 0;
+  document.getElementById('s-shares').textContent = last.shares || 0;
+  document.getElementById('s-views').textContent  = last.views || 0;
+  document.getElementById('s-reach').textContent  = last.reach || 0;
 
-  document.getElementById("s-seg").innerHTML =
-    last.followers + growthHTML();
+  // 🔹 Tabela
+  const table = document.getElementById("table-wrap");
 
-  document.getElementById("s-shares").textContent = totalShares;
-  document.getElementById("s-views").textContent = totalViews;
-  document.getElementById("s-reach").textContent = last.reach;
-
-  const bestDay = data.reduce((max,d)=> d.views>max.views?d:max, data[0]);
-
-  renderChart();
-  renderTable(bestDay);
+  table.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Dia</th>
+          <th>Likes</th>
+          <th>Salv.</th>
+          <th>Compart.</th>
+          <th>Visu. Perfil</th>
+          <th>Seg.</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map((d,i)=>`
+          <tr>
+            <td>Dia ${i+1}</td>
+            <td>${d.likes}</td>
+            <td>${d.saves}</td>
+            <td>${d.shares}</td>
+            <td>${d.views}</td>
+            <td>${d.followers}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
 }
-
-function growthHTML(){
-  if(data.length < 2) return "";
-
-  const first = data[0].followers;
-  const last = data[data.length-1].followers;
-
-  if(first === 0) return "";
-
-  const growth = ((last - first) / first * 100).toFixed(1);
-
-  return `<div style="font-size:12px;color:#c84b2f;margin-top:6px">
-            +${growth}% crescimento
-          </div>`;
-}
-
 function renderChart(){
   const ctx = document.getElementById("viewsChart");
 
