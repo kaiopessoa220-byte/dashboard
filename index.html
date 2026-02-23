@@ -2,70 +2,64 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nuvant Performance</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  font-family: Arial, sans-serif;
-  background:#d6d2cc;
-  margin:0;
-  padding:40px;
+body {
+  font-family: 'Inter', sans-serif;
+  background: #e9e3dc;
+  margin: 0;
+  padding: 40px;
 }
 
-h1{
-  margin-bottom:30px;
+h1 {
+  font-size: 38px;
+  margin-bottom: 30px;
 }
 
-.top-bar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.status{
-  font-size:14px;
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px;
+  width: 250px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:25px;
-  margin-bottom:40px;
+.card h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #777;
+  font-weight: 600;
 }
 
-.card{
-  background:#e5e5e5;
-  padding:25px;
-  border-radius:20px;
+.card p {
+  font-size: 32px;
+  margin: 10px 0 0;
+  font-weight: 700;
 }
 
-.card h3{
-  margin:0 0 15px 0;
-  font-size:16px;
-  color:#666;
-}
-
-.card p{
-  margin:0;
-  font-size:28px;
-  font-weight:bold;
-}
-
-.box{
-  background:#e5e5e5;
-  padding:40px;
-  border-radius:20px;
-  margin-bottom:40px;
+#status {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  font-size: 14px;
 }
 </style>
 </head>
+
 <body>
 
-<div class="top-bar">
-  <h1>Nuvant Performance</h1>
-  <div id="sync-status" class="status">🔄 Sincronizando...</div>
-</div>
+<h1>Nuvant Performance</h1>
+<div id="status">Sincronizando...</div>
 
 <div class="cards">
   <div class="card">
@@ -89,63 +83,65 @@ h1{
   </div>
 </div>
 
-<div class="box">
-  <canvas id="chart"></canvas>
-</div>
-
 <script>
-const sheetID = "1Zs4ObXWH_GUxaRNjf2OXXK9OIJdpXQdvpQqhj-Y8LXw";
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv";
 
 let data = [];
 
-function setStatus(text) {
-  document.getElementById("status").innerText = text;
+function setStatus(text, error=false){
+  const el = document.getElementById("status");
+  if(!el) return;
+  el.innerText = text;
+  el.style.color = error ? "red" : "black";
 }
 
-async function fetchData() {
+async function fetchData(){
   try {
     setStatus("Sincronizando...");
 
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
-    const res = await fetch(url);
+    const res = await fetch(sheetURL);
     const text = await res.text();
 
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
+    const rows = text.split("\n").slice(1);
 
-    data = rows.map(r => ({
-      date: r.c[0]?.v || "",
-      likes: r.c[1]?.v || 0,
-      saves: r.c[2]?.v || 0,
-      shares: r.c[3]?.v || 0,
-      comments: r.c[4]?.v || 0,
-      profileViews: r.c[5]?.v || 0,
-      followers: r.c[6]?.v || 0,
-      reach: r.c[7]?.v || 0
-    }));
+    data = rows.map(r=>{
+      const cols = r.split(",");
+
+      return {
+        date: cols[0],
+        likes: +cols[1] || 0,
+        saves: +cols[2] || 0,
+        shares: +cols[3] || 0,
+        comments: +cols[4] || 0,
+        views: +cols[5] || 0,
+        followers: +cols[6] || 0,
+        reach: +cols[7] || 0
+      };
+    }).filter(d=>d.date);
 
     render();
-    setStatus("Sincronizado ✅");
+    setStatus("Sincronizado ✓");
 
-  } catch (err) {
-    console.error(err);
-    setStatus("Erro na sincronização ❌");
+  } catch (error){
+    console.error(error);
+    setStatus("Erro na sincronização", true);
   }
 }
 
-function render() {
-  if (!data.length) return;
+function render(){
+  if(!data.length) return;
 
   const last = data[data.length - 1];
 
   document.getElementById("followers").innerText = last.followers;
   document.getElementById("shares").innerText = last.shares;
-  document.getElementById("profileViews").innerText = last.profileViews;
+  document.getElementById("views").innerText = last.views;
   document.getElementById("reach").innerText = last.reach;
 }
 
 fetchData();
 setInterval(fetchData, 60000);
 </script>
+
 </body>
 </html>
