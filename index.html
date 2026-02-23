@@ -62,6 +62,28 @@
 
   .header-actions { display: flex; gap: 10px; }
 
+  .sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  .sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent3);
+  }
+
+  .sync-dot.syncing { background: var(--accent2); }
+  .sync-dot.error { background: var(--accent); }
+
   .btn {
     padding: 10px 20px;
     border-radius: 10px;
@@ -315,6 +337,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <div class="sync-status" id="sync-status">
+        <span class="sync-dot" id="sync-dot"></span>
+        <span id="sync-text">Sincronizando…</span>
+      </div>
       <button class="btn btn-outline" onclick="exportCSV()">⬇ Exportar</button>
 
     </div>
@@ -400,6 +426,8 @@
 <script>
   let data = [];
   const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv';
+  const AUTO_REFRESH_MS = 60000;
+  let lastCsvFingerprint = '';
 
   async function fetchWithTimeout(url, ms=8000) {
     const controller = new AbortController();
@@ -411,35 +439,81 @@
     } catch(e) { clearTimeout(timer); throw e; }
   }
 
-  async function autoLoad() {
+  function csvToTSV(text) {
+    return text
+      .split('\n')
+      .map(line => line.split(',').map(c => c.replace(/"/g,'')).join('\t'))
+      .join('\n');
+  }
+
+  function updateSyncStatus(text, state='ok') {
+    const dot = document.getElementById('sync-dot');
+    const label = document.getElementById('sync-text');
+    if (!dot || !label) return;
+    dot.classList.remove('syncing', 'error');
+    if (state === 'syncing') dot.classList.add('syncing');
+    if (state === 'error') dot.classList.add('error');
+    label.textContent = text;
+  }
+
+  async function fetchSheetCSV() {
     const proxies = [
       'https://api.allorigins.win/raw?url=',
       'https://corsproxy.io/?',
     ];
+
     for (const proxy of proxies) {
       try {
         const res = await fetchWithTimeout(proxy + encodeURIComponent(CSV_URL), 8000);
         if (!res.ok) continue;
         const text = await res.text();
         if (!text || text.length < 10) continue;
-        document.getElementById('csvInput').value = text
-          .split('\n')
-          .map(line => line.split(',').map(c => c.replace(/"/g,'')).join('\t'))
-          .join('\n');
-        loadData();
-        return;
+        return text;
       } catch(e) { continue; }
     }
-    // All proxies failed
-    document.getElementById('loading-msg').textContent = '⚠️ Não foi possível carregar automaticamente. Adicione dados manualmente.';
+
+    throw new Error('Não foi possível buscar a planilha nos proxies disponíveis.');
   }
 
-  window.addEventListener('load', autoLoad);
+  async function syncFromSheet(showToastOnSuccess = false) {
+    updateSyncStatus('Sincronizando…', 'syncing');
+    try {
+      const csvText = await fetchSheetCSV();
+      const fingerprint = csvText.trim();
+      const hasChanged = fingerprint !== lastCsvFingerprint;
+
+      if (hasChanged) {
+        document.getElementById('csvInput').value = csvToTSV(csvText);
+        const loaded = loadData({ silent: !showToastOnSuccess });
+        if (!loaded) {
+          updateSyncStatus('Erro ao processar dados', 'error');
+          return;
+        }
+        lastCsvFingerprint = fingerprint;
+      }
+
+      const now = new Date();
+      updateSyncStatus(`Atualizado às ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
+
+      if (showToastOnSuccess) {
+        showToast(hasChanged ? '✅ Dashboard atualizado com dados da planilha!' : '✅ Nenhuma alteração nova na planilha.');
+      }
+    } catch (e) {
+      updateSyncStatus('Falha na sincronização', 'error');
+      document.getElementById('loading-msg').textContent = '⚠️ Não foi possível carregar automaticamente. Adicione dados manualmente.';
+    }
+  }
+
+  window.addEventListener('load', async () => {
+    await syncFromSheet(false);
+    setInterval(() => syncFromSheet(false), AUTO_REFRESH_MS);
+  });
 
   // Columns: DATA, LIKES/DIA, SALVAMENTOS, COMPARTILHAMENTOS, COMENTARIOS, VIZUALIZAÇÕES, SEGUIDORES, CONTAS ALCANÇADAS, CLIQUES NO LINK
-  function loadData() {
+  function loadData(options = {}) {
+    const { silent = false } = options;
     const raw = document.getElementById('csvInput').value.trim();
-    if (!raw) { showToast('❌ Cole os dados primeiro!'); return; }
+    if (!raw) { if (!silent) showToast('❌ Cole os dados primeiro!'); return false; }
 
     const lines = raw.split('\n').filter(l => l.trim());
     data = [];
@@ -468,11 +542,12 @@
       data.push({ date, likes, saves, shares, comments, views, followers, reach, linkClicks });
     }
 
-    if (data.length === 0) { showToast('❌ Nenhum dado encontrado!'); return; }
+    if (data.length === 0) { if (!silent) showToast('❌ Nenhum dado encontrado!'); return false; }
 
     document.getElementById('loading-msg').style.display = 'none';
     render();
-    showToast(`✅ ${data.length} linha(s) carregada(s)!`);
+    if (!silent) showToast(`✅ ${data.length} linha(s) carregada(s)!`);
+    return true;
   }
 
   function render() {
