@@ -95,10 +95,8 @@ h1{
 
 <script>
 
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv";
-
-// proxy para evitar CORS no GitHub Pages
-const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(sheetURL);
+const sheetID = "2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp";
+const sheetURL = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json`;
 
 let chart;
 
@@ -106,24 +104,22 @@ async function fetchData(){
   try{
     document.getElementById("sync-status").innerHTML="🔄 Sincronizando...";
 
-    const res = await fetch(proxy);
+    const res = await fetch(sheetURL);
     const text = await res.text();
 
-    const rows = text.split("\n").slice(1);
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
 
-    const data = rows.map(r=>{
-      const c = r.split(",");
-      return {
-        likes: +c[0] || 0,
-        saves: +c[1] || 0,
-        shares: +c[2] || 0,
-        comments: +c[3] || 0,
-        views: +c[4] || 0,
-        followers: +c[5] || 0,
-        reach: +c[6] || 0,
-        clicks: +c[7] || 0
-      }
-    });
+    const data = rows.map(r=>({
+      likes: r.c[0]?.v || 0,
+      saves: r.c[1]?.v || 0,
+      shares: r.c[2]?.v || 0,
+      comments: r.c[3]?.v || 0,
+      views: r.c[4]?.v || 0,
+      followers: r.c[5]?.v || 0,
+      reach: r.c[6]?.v || 0,
+      clicks: r.c[7]?.v || 0
+    }));
 
     const last = data[data.length-1];
 
