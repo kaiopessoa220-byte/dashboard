@@ -4,607 +4,301 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nuvant Performance · Analytics</title>
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+:root {
+  --bg: #f7f3ee;
+  --surface: #ffffff;
+  --surface2: #f0ebe3;
+  --dark: #1a1410;
+  --accent: #c84b2f;
+  --accent2: #e8922a;
+  --accent3: #2a7a4b;
+  --text: #1a1410;
+  --muted: #9a8f85;
+  --border: #e6dfd6;
+}
 
-  :root {
-    --bg: #f7f3ee;
-    --surface: #ffffff;
-    --surface2: #f0ebe3;
-    --dark: #1a1410;
-    --accent: #c84b2f;
-    --accent2: #e8922a;
-    --accent3: #2a7a4b;
-    --text: #1a1410;
-    --muted: #9a8f85;
-    --border: rgba(26,20,16,0.08);
-  }
+* { box-sizing: border-box; margin:0; padding:0; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    padding: 36px 24px;
-  }
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
+}
 
-  .container { max-width: 1080px; margin: 0 auto; }
+/* HEADER */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
+}
 
-  /* Header */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 40px;
-  }
+.brand { display:flex; align-items:center; gap:16px; }
 
-  .brand { display: flex; align-items: center; gap: 16px; }
+.logo {
+  width:52px; height:52px;
+  background:var(--dark);
+  border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  color:white;
+}
 
-  .logo {
-    width: 52px; height: 52px;
-    background: var(--dark);
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-  }
+.brand-name { font-size:22px; font-weight:800; }
+.brand-sub { font-size:12px; color:var(--muted); }
 
-  .brand-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
+.header-actions { display:flex; gap:10px; align-items:center; }
 
-  .brand-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.sync-status {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 12px;
+  border-radius:10px;
+  border:1.5px solid var(--border);
+  font-size:12px;
+  color:var(--muted);
+  background:var(--surface);
+}
 
-  .header-actions { display: flex; gap: 10px; }
+.sync-dot {
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--accent3);
+}
 
-  .btn {
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-  }
+.sync-dot.syncing { background: var(--accent2); }
+.sync-dot.error { background: var(--accent); }
 
-  .btn-outline {
-    background: transparent;
-    border: 1.5px solid var(--border);
-    color: var(--muted);
-  }
-  .btn-outline:hover { border-color: var(--dark); color: var(--dark); }
+.btn {
+  padding:10px 20px;
+  border-radius:10px;
+  font-size:13px;
+  cursor:pointer;
+  border:none;
+  transition:0.2s;
+}
 
-  .btn-dark {
-    background: var(--dark);
-    color: white;
-  }
-  .btn-dark:hover { background: #2d2520; transform: translateY(-1px); }
+.btn-outline {
+  background:transparent;
+  border:1.5px solid var(--border);
+  color:var(--muted);
+}
 
-  /* Import */
-  .import-section {
-    background: var(--surface);
-    border: 1.5px dashed var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 32px;
-    transition: border-color 0.2s;
-  }
+.btn-dark {
+  background:var(--dark);
+  color:white;
+}
 
-  .import-section:focus-within { border-color: var(--accent); }
+/* SUMMARY */
+.summary {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap:20px;
+  margin-bottom:40px;
+}
 
-  .import-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
+.sum-card {
+  background:var(--surface);
+  padding:20px;
+  border-radius:16px;
+  border:1px solid var(--border);
+}
 
-  .import-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-  }
+.sum-label { font-size:13px; color:var(--muted); }
+.sum-value { font-size:26px; font-weight:700; margin-top:6px; }
 
-  .import-hint {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 14px;
-  }
+.table-card {
+  background:var(--surface);
+  border-radius:16px;
+  padding:20px;
+  border:1px solid var(--border);
+  overflow:auto;
+}
 
-  .import-hint strong { color: var(--accent2); }
+table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
 
-  .import-row { display: flex; gap: 10px; }
+th, td {
+  padding:10px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+}
 
-  textarea {
-    flex: 1;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: 'DM Sans', monospace;
-    font-size: 12px;
-    padding: 12px 14px;
-    resize: vertical;
-    min-height: 70px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  textarea:focus { border-color: var(--accent); }
+.toast {
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:var(--dark);
+  color:white;
+  padding:12px 18px;
+  border-radius:12px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:0.3s;
+}
 
-  /* Summary */
-  .summary {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-
-  .sum-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 22px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .sum-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
-
-  .sum-card.featured {
-    background: var(--dark);
-    color: white;
-    border-color: var(--dark);
-  }
-
-  .sum-icon { font-size: 22px; margin-bottom: 12px; }
-  .sum-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
-  .sum-card.featured .sum-label { color: rgba(255,255,255,0.5); }
-  .sum-value { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; line-height: 1; }
-  .sum-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
-  .sum-card.featured .sum-sub { color: rgba(255,255,255,0.4); }
-
-  .sum-trend {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    margin-top: 8px;
-  }
-  .trend-up { background: rgba(42,122,75,0.1); color: var(--accent3); }
-  .trend-down { background: rgba(200,75,47,0.1); color: var(--accent); }
-  .trend-neutral { background: var(--surface2); color: var(--muted); }
-
-  /* Grid */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 26px;
-  }
-
-  .card-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .card-title-muted { font-size: 11px; color: var(--muted); font-weight: 400; font-family: 'DM Sans', sans-serif; }
-
-  /* Chart */
-  .chart-legend { display: flex; gap: 16px; font-size: 11px; color: var(--muted); }
-  .leg { display: flex; align-items: center; gap: 5px; }
-  .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-  .chart-wrap { position: relative; height: 180px; margin-top: 4px; }
-  .chart-svg { width: 100%; height: 100%; overflow: visible; }
-  .chart-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-  .chart-area { opacity: 0.08; }
-  .chart-dot { cursor: pointer; transition: r 0.2s; }
-  .chart-dot:hover { r: 5; }
-  .chart-grid-line { stroke: var(--border); stroke-width: 1; }
-  .chart-label { font-size: 10px; fill: var(--muted); font-family: 'DM Sans', sans-serif; }
-  .chart-y-label { font-size: 10px; fill: var(--muted); font-family: 'DM Sans', sans-serif; text-anchor: end; }
-
-  /* Insights panel */
-  .insights-panel { display: flex; flex-direction: column; gap: 12px; }
-
-  .insight-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    background: var(--surface2);
-    border-radius: 12px;
-    font-size: 13px;
-  }
-
-  .insight-left { display: flex; align-items: center; gap: 10px; }
-  .insight-icon { font-size: 18px; }
-  .insight-name { font-weight: 500; }
-  .insight-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
-
-  /* Table */
-  .table-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 26px;
-  }
-
-  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .data-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 0 12px 12px; font-weight: 500; }
-  .data-table td { padding: 12px; border-top: 1px solid var(--border); }
-  .data-table tr:hover td { background: var(--surface2); }
-  .data-table tr:first-child td { border-top: none; }
-
-  .metric-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .pill-red { background: rgba(200,75,47,0.1); color: var(--accent); }
-  .pill-orange { background: rgba(232,146,42,0.1); color: var(--accent2); }
-  .pill-green { background: rgba(42,122,75,0.1); color: var(--accent3); }
-
-  .empty-state {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--muted);
-  }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-text { font-size: 14px; }
-
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    background: var(--dark); color: white;
-    border-radius: 10px; padding: 14px 20px;
-    font-size: 13px;
-    transform: translateY(80px); opacity: 0;
-    transition: all 0.3s; z-index: 100;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-
-  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-  .animate { animation: fadeUp 0.5s ease both; }
-
-  @media (max-width: 768px) {
-    .summary { grid-template-columns: 1fr 1fr; }
-    .main-grid { grid-template-columns: 1fr; }
-  }
+.toast.show {
+  opacity:1;
+  transform:translateY(0);
+}
 </style>
 </head>
 <body>
+
 <div class="container">
 
-  <header class="animate">
-    <div class="brand">
-      <div class="logo">📊</div>
-      <div>
-        <div class="brand-name">Nuvant Performance</div>
-        <div class="brand-sub">@nuvantperformance · Analytics do Perfil</div>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-outline" onclick="exportCSV()">⬇ Exportar</button>
-
-    </div>
-  </header>
-
-  <!-- Hidden textarea for data -->
-  <textarea id="csvInput" style="display:none"></textarea>
-
-  <!-- Summary -->
-  <div id="loading-msg" style="text-align:center;padding:20px;color:var(--muted);font-size:14px">⏳ Carregando dados...</div>
-  <div class="summary animate" id="summary">
-    <div class="sum-card featured">
-      <div class="sum-icon">👥</div>
-      <div class="sum-label">Seguidores</div>
-      <div class="sum-value" id="s-seg">—</div>
-      <div class="sum-sub">total atual</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-icon">📡</div>
-      <div class="sum-label">Contas Alcançadas</div>
-      <div class="sum-value" id="s-reach">—</div>
-      <div class="sum-sub">acumulado</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-icon">❤️</div>
-      <div class="sum-label">Likes/Dia</div>
-      <div class="sum-value" id="s-likes">—</div>
-      <div class="sum-sub">total acumulado</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-icon">🔖</div>
-      <div class="sum-label">Salvamentos</div>
-      <div class="sum-value" id="s-saves">—</div>
-      <div class="sum-sub">total acumulado</div>
+<header>
+  <div class="brand">
+    <div class="logo">📊</div>
+    <div>
+      <div class="brand-name">Nuvant Performance</div>
+      <div class="brand-sub">@nuvantperformance · Analytics do Perfil</div>
     </div>
   </div>
 
-  <!-- Main grid -->
-  <div class="main-grid animate">
-    <div class="card">
-      <div class="card-title">
-        Evolução de Seguidores
-        <div class="chart-legend">
-          <div class="leg"><div class="leg-dot" style="background:var(--accent)"></div>Seguidores</div>
-        </div>
-      </div>
-      <div class="chart-wrap" id="chart">
-        <div class="empty-state" style="width:100%">
-          <div class="empty-icon">📈</div>
-          <div class="empty-text">Importe os dados para ver o gráfico</div>
-        </div>
-      </div>
+  <div class="header-actions">
+    <div class="sync-status">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-text">Sincronizando…</span>
     </div>
-
-    <div class="card">
-      <div class="card-title">Resumo do período</div>
-      <div class="insights-panel" id="insights">
-        <div class="insight-row"><div class="insight-left"><span class="insight-icon">❤️</span><span class="insight-name">Likes</span></div><span class="insight-val">—</span></div>
-        <div class="insight-row"><div class="insight-left"><span class="insight-icon">🔖</span><span class="insight-name">Salvamentos</span></div><span class="insight-val">—</span></div>
-        <div class="insight-row"><div class="insight-left"><span class="insight-icon">🔁</span><span class="insight-name">Compartilhamentos</span></div><span class="insight-val">—</span></div>
-        <div class="insight-row"><div class="insight-left"><span class="insight-icon">💬</span><span class="insight-name">Comentários</span></div><span class="insight-val">—</span></div>
-        <div class="insight-row"><div class="insight-left"><span class="insight-icon">👁️</span><span class="insight-name">Visualizações</span></div><span class="insight-val">—</span></div>
-        <div class="insight-row"><div class="insight-left"><span class="insight-icon">🔗</span><span class="insight-name">Cliques no link</span></div><span class="insight-val">—</span></div>
-      </div>
-    </div>
+    <button class="btn btn-outline" onclick="exportCSV()">⬇ Exportar</button>
   </div>
+</header>
 
-  <!-- Table -->
-  <div class="table-card animate">
-    <div class="card-title">Histórico diário <span class="card-title-muted" id="row-count"></span></div>
-    <div id="table-wrap">
-      <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <div class="empty-text">Nenhum dado carregado ainda — importe os dados da planilha acima</div>
-      </div>
-    </div>
+<div class="summary">
+  <div class="sum-card">
+    <div class="sum-label">Seguidores</div>
+    <div class="sum-value" id="s-seg">—</div>
   </div>
+  <div class="sum-card">
+    <div class="sum-label">Contas Alcançadas</div>
+    <div class="sum-value" id="s-reach">—</div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-label">Likes</div>
+    <div class="sum-value" id="s-likes">—</div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-label">Salvamentos</div>
+    <div class="sum-value" id="s-saves">—</div>
+  </div>
+</div>
+
+<div class="table-card">
+  <table id="table"></table>
+</div>
 
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  let data = [];
-  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv';
+const CSV_URL = "COLE_AQUI_SEU_LINK_CSV_PUBLICADO";
+const AUTO_REFRESH_MS = 60000;
 
-  async function fetchWithTimeout(url, ms=8000) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), ms);
-    try {
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timer);
-      return res;
-    } catch(e) { clearTimeout(timer); throw e; }
-  }
+let lastFingerprint = "";
+let data = [];
 
-  async function autoLoad() {
-    const proxies = [
-      'https://api.allorigins.win/raw?url=',
-      'https://corsproxy.io/?',
-    ];
-    for (const proxy of proxies) {
-      try {
-        const res = await fetchWithTimeout(proxy + encodeURIComponent(CSV_URL), 8000);
-        if (!res.ok) continue;
-        const text = await res.text();
-        if (!text || text.length < 10) continue;
-        document.getElementById('csvInput').value = text
-          .split('\n')
-          .map(line => line.split(',').map(c => c.replace(/"/g,'')).join('\t'))
-          .join('\n');
-        loadData();
-        return;
-      } catch(e) { continue; }
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+
+function updateSync(text,state="ok"){
+  const dot=document.getElementById("sync-dot");
+  const label=document.getElementById("sync-text");
+  dot.classList.remove("syncing","error");
+  if(state==="syncing") dot.classList.add("syncing");
+  if(state==="error") dot.classList.add("error");
+  label.textContent=text;
+}
+
+async function fetchCSV(){
+  updateSync("Sincronizando…","syncing");
+  try{
+    const res=await fetch(CSV_URL);
+    const text=await res.text();
+    const fingerprint=text.trim();
+    if(fingerprint!==lastFingerprint){
+      lastFingerprint=fingerprint;
+      parseCSV(text);
+      showToast("✅ Dados atualizados");
     }
-    // All proxies failed
-    document.getElementById('loading-msg').textContent = '⚠️ Não foi possível carregar automaticamente. Adicione dados manualmente.';
+    updateSync("Atualizado às "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}));
+  }catch(e){
+    updateSync("Erro na sincronização","error");
   }
+}
 
-  window.addEventListener('load', autoLoad);
-
-  // Columns: DATA, LIKES/DIA, SALVAMENTOS, COMPARTILHAMENTOS, COMENTARIOS, VIZUALIZAÇÕES, SEGUIDORES, CONTAS ALCANÇADAS, CLIQUES NO LINK
-  function loadData() {
-    const raw = document.getElementById('csvInput').value.trim();
-    if (!raw) { showToast('❌ Cole os dados primeiro!'); return; }
-
-    const lines = raw.split('\n').filter(l => l.trim());
-    data = [];
-
-    for (const line of lines) {
-      const cols = line.split('\t').map(c => c.trim());
-      // Skip header
-      if (isNaN(parseInt(cols[0])) && isNaN(parseInt(cols[1]))) continue;
-
-      // Check if first column is a date or a number
-      let date = '', offset = 0;
-      if (isNaN(parseInt(cols[0]))) {
-        date = cols[0];
-        offset = 1;
-      }
-
-      const likes    = parseInt(cols[offset + 0]) || 0;
-      const saves    = parseInt(cols[offset + 1]) || 0;
-      const shares   = parseInt(cols[offset + 2]) || 0;
-      const comments = parseInt(cols[offset + 3]) || 0;
-      const views    = parseInt(cols[offset + 4]) || 0;
-      const followers= parseInt(cols[offset + 5]) || 0;
-      const reach    = parseInt(cols[offset + 6]) || 0;
-      const linkClicks= parseInt(cols[offset + 7]) || 0;
-
-      data.push({ date, likes, saves, shares, comments, views, followers, reach, linkClicks });
-    }
-
-    if (data.length === 0) { showToast('❌ Nenhum dado encontrado!'); return; }
-
-    document.getElementById('loading-msg').style.display = 'none';
-    render();
-    showToast(`✅ ${data.length} linha(s) carregada(s)!`);
-  }
-
-  function render() {
-    const total = (key) => data.reduce((s, d) => s + d[key], 0);
-    const last = data[data.length - 1];
-
-    // Summary
-    document.getElementById('s-seg').textContent = last.followers || '—';
-    document.getElementById('s-reach').textContent = total('reach');
-    document.getElementById('s-likes').textContent = total('likes');
-    document.getElementById('s-saves').textContent = total('saves');
-
-    // Insights panel
-    document.getElementById('insights').innerHTML = `
-      <div class="insight-row"><div class="insight-left"><span class="insight-icon">❤️</span><span class="insight-name">Likes</span></div><span class="insight-val">${total('likes')}</span></div>
-      <div class="insight-row"><div class="insight-left"><span class="insight-icon">🔖</span><span class="insight-name">Salvamentos</span></div><span class="insight-val">${total('saves')}</span></div>
-      <div class="insight-row"><div class="insight-left"><span class="insight-icon">🔁</span><span class="insight-name">Compartilhamentos</span></div><span class="insight-val">${total('shares')}</span></div>
-      <div class="insight-row"><div class="insight-left"><span class="insight-icon">💬</span><span class="insight-name">Comentários</span></div><span class="insight-val">${total('comments')}</span></div>
-      <div class="insight-row"><div class="insight-left"><span class="insight-icon">👁️</span><span class="insight-name">Visualizações</span></div><span class="insight-val">${total('views')}</span></div>
-      <div class="insight-row"><div class="insight-left"><span class="insight-icon">🔗</span><span class="insight-name">Cliques no link</span></div><span class="insight-val">${total('linkClicks')}</span></div>
-    `;
-
-    // Chart - Line chart for followers
-    const chartEl = document.getElementById('chart');
-    const values = data.map(d => d.followers);
-    const labels = data.map(d => d.date || '');
-    
-    if (values.every(v => v === 0)) {
-      chartEl.innerHTML = '<div class="empty-state" style="width:100%"><div class="empty-icon">📈</div><div class="empty-text">Sem dados de seguidores</div></div>';
-    } else {
-      const W = 700, H = 160, padL = 52, padR = 16, padT = 12, padB = 28;
-      const minV = Math.min(...values);
-      const maxV = Math.max(...values);
-      const range = maxV - minV || 1;
-      const xStep = (W - padL - padR) / Math.max(values.length - 1, 1);
-      
-      const px = (i) => padL + i * xStep;
-      const py = (v) => padT + (1 - (v - minV) / range) * (H - padT - padB);
-      
-      // Build path
-      const pts = values.map((v, i) => `${px(i)},${py(v)}`);
-      const linePath = 'M ' + pts.join(' L ');
-      const areaPath = linePath + ` L ${px(values.length-1)},${H-padB} L ${px(0)},${H-padB} Z`;
-      
-      // Grid lines (4 horizontal)
-      let gridLines = '';
-      for (let i = 0; i <= 3; i++) {
-        const y = padT + (i / 3) * (H - padT - padB);
-        const val = Math.round(maxV - (i / 3) * range);
-        const label = val >= 1000 ? (val/1000).toFixed(1) + ' mil' : val;
-        gridLines += `<line class="chart-grid-line" x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}"/>`;
-        gridLines += `<text class="chart-y-label" x="${padL-6}" y="${y+4}">${label}</text>`;
-      }
-      
-      // X labels (show every nth)
-      let xLabels = '';
-      const step = Math.max(1, Math.floor(values.length / 6));
-      labels.forEach((l, i) => {
-        if (i % step === 0 || i === labels.length - 1) {
-          xLabels += `<text class="chart-label" x="${px(i)}" y="${H}" text-anchor="middle">${l}</text>`;
-        }
-      });
-      
-      // Dots
-      const dots = values.map((v, i) => `<circle class="chart-dot" cx="${px(i)}" cy="${py(v)}" r="3.5" fill="var(--accent)" title="${labels[i]}: ${v}"/>`).join('');
-      
-      chartEl.innerHTML = `
-        <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3"/>
-              <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          ${gridLines}
-          <path d="${areaPath}" fill="url(#areaGrad)"/>
-          <path class="chart-line" d="${linePath}" stroke="var(--accent)"/>
-          ${dots}
-          ${xLabels}
-        </svg>
-      `;
-    }
-
-    // Table
-    document.getElementById('row-count').textContent = `· ${data.length} dia(s)`;
-    let html = `<table class="data-table">
-      <thead><tr>
-        <th>Data</th>
-        <th>Likes</th>
-        <th>Salvamentos</th>
-        <th>Compartilh.</th>
-        <th>Comentários</th>
-        <th>Visualizações</th>
-        <th>Seguidores</th>
-        <th>Alcance</th>
-        <th>Cliques</th>
-      </tr></thead><tbody>`;
-    [...data].reverse().forEach(d => {
-      html += `<tr>
-        <td>${d.date || '—'}</td>
-        <td><span class="metric-pill pill-red">❤️ ${d.likes}</span></td>
-        <td><span class="metric-pill pill-orange">🔖 ${d.saves}</span></td>
-        <td>${d.shares}</td>
-        <td>${d.comments}</td>
-        <td>${d.views}</td>
-        <td><span class="metric-pill pill-green">👥 ${d.followers}</span></td>
-        <td>${d.reach}</td>
-        <td>${d.linkClicks}</td>
-      </tr>`;
+function parseCSV(text){
+  const rows=text.split("\n").slice(1);
+  data=[];
+  rows.forEach(r=>{
+    const c=r.split(",");
+    if(c.length<8) return;
+    data.push({
+      date:c[0],
+      likes:+c[1]||0,
+      saves:+c[2]||0,
+      shares:+c[3]||0,
+      comments:+c[4]||0,
+      views:+c[5]||0,
+      followers:+c[6]||0,
+      reach:+c[7]||0
     });
-    html += '</tbody></table>';
-    document.getElementById('table-wrap').innerHTML = html;
-  }
+  });
+  render();
+}
 
-  function exportCSV() {
-    if (!data.length) { showToast('❌ Nenhum dado para exportar!'); return; }
-    const headers = ['Data','Likes/Dia','Salvamentos','Compartilhamentos','Comentarios','Visualizações','Seguidores','Contas Alcançadas','Cliques no Link'];
-    const rows = [headers, ...data.map(d => [d.date, d.likes, d.saves, d.shares, d.comments, d.views, d.followers, d.reach, d.linkClicks])];
-    const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-    a.download = 'nuvant_analytics.csv';
-    a.click();
-    showToast('✅ Exportado com sucesso!');
-  }
+function render(){
+  if(!data.length) return;
+  const last=data[data.length-1];
+  const total=k=>data.reduce((s,d)=>s+d[k],0);
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+  document.getElementById("s-seg").textContent=last.followers;
+  document.getElementById("s-reach").textContent=total("reach");
+  document.getElementById("s-likes").textContent=total("likes");
+  document.getElementById("s-saves").textContent=total("saves");
+
+  const table=document.getElementById("table");
+  table.innerHTML="<tr><th>Data</th><th>Likes</th><th>Salv.</th><th>Seg.</th></tr>";
+  data.forEach(d=>{
+    table.innerHTML+=`<tr>
+      <td>${d.date}</td>
+      <td>${d.likes}</td>
+      <td>${d.saves}</td>
+      <td>${d.followers}</td>
+    </tr>`;
+  });
+}
+
+function exportCSV(){
+  const blob=new Blob([lastFingerprint],{type:"text/csv"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="dados.csv";
+  a.click();
+}
+
+window.addEventListener("load",()=>{
+  fetchCSV();
+  setInterval(fetchCSV,AUTO_REFRESH_MS);
+});
 </script>
+
 </body>
 </html>
