@@ -129,27 +129,38 @@ let data = [];
 let chart;
 
 async function fetchData(){
-  const res = await fetch(sheetURL);
-  const text = await res.text();
-  const rows = text.split("\n").slice(1);
+  try{
+    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(sheetURL));
+    const text = await res.text();
 
-  data = rows.map(r=>{
-    const cols = r.split(",");
-    return {
-      date: cols[0],
-      likes: +cols[1] || 0,
-      saves: +cols[2] || 0,
-      shares: +cols[3] || 0,
-      comments: +cols[4] || 0,
-      views: +cols[5] || 0,
-      followers: +cols[6] || 0,
-      reach: +cols[7] || 0
-    }
-  }).filter(d=>d.date);
+    const rows = text.split("\n").slice(1);
 
-  render();
+    data = rows.map((r, index)=>{
+      const cols = r.split(",");
+
+      return {
+        date: "Dia " + (index + 1),
+        likes: Number(cols[0]) || 0,
+        saves: Number(cols[1]) || 0,
+        shares: Number(cols[2]) || 0,
+        comments: Number(cols[3]) || 0,
+        views: Number(cols[4]) || 0,
+        followers: Number(cols[5]) || 0,
+        reach: Number(cols[6]) || 0,
+        clicks: Number(cols[7]) || 0
+      };
+    }).filter(d => d.likes || d.views || d.followers);
+
+    render();
+
+    document.querySelector(".status").innerHTML = 
+      "🟢 Atualizado às " + new Date().toLocaleTimeString();
+
+  } catch(error){
+    console.error(error);
+    document.querySelector(".status").innerHTML = "❌ Erro na sincronização";
+  }
 }
-
 function render(){
   if(!data.length) return;
 
