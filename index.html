@@ -19,6 +19,9 @@
     --text: #f0ede8;
     --muted: #7a7880;
     --danger: #ff5f5f;
+    --gold: #f5c842;
+    --silver: #b0b8c8;
+    --bronze: #cd7f45;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,10 +47,8 @@
   body::after {
     content: '';
     position: fixed;
-    top: -20%;
-    left: -10%;
-    width: 60%;
-    height: 60%;
+    top: -20%; left: -10%;
+    width: 60%; height: 60%;
     background: radial-gradient(circle, rgba(200,240,74,0.07) 0%, transparent 70%);
     pointer-events: none;
     z-index: 0;
@@ -87,10 +88,7 @@
     letter-spacing: -0.5px;
   }
 
-  h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
+  h1 em { font-style: italic; color: var(--accent); }
 
   .status-pill {
     display: inline-flex;
@@ -107,8 +105,7 @@
   }
 
   .status-dot {
-    width: 7px;
-    height: 7px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--muted);
     transition: background 0.3s;
@@ -119,7 +116,6 @@
   .status-pill.err .status-dot { background: var(--danger); }
   .status-pill.err { color: var(--danger); }
 
-  /* Section labels */
   .section-label {
     font-size: 10px;
     font-weight: 600;
@@ -130,13 +126,15 @@
     padding-left: 2px;
   }
 
-  /* Cards grid — 4 cols */
+  /* Metric cards */
   .cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
     margin-bottom: 14px;
   }
+
+  .cards-row2 { margin-bottom: 24px; }
 
   .card {
     background: var(--surface);
@@ -149,10 +147,7 @@
     animation: fadeUp 0.5s both;
   }
 
-  .card:hover {
-    border-color: rgba(200,240,74,0.2);
-    transform: translateY(-2px);
-  }
+  .card:hover { border-color: rgba(200,240,74,0.2); transform: translateY(-2px); }
 
   .card::before {
     content: '';
@@ -166,13 +161,10 @@
   .card:hover::before { opacity: 1; }
 
   .card-icon {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 9px;
     background: rgba(200,240,74,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     margin-bottom: 16px;
     font-size: 15px;
   }
@@ -189,13 +181,11 @@
   .card p {
     font-family: 'DM Serif Display', serif;
     font-size: 36px;
-    font-weight: 400;
     color: var(--text);
     line-height: 1;
     letter-spacing: -1px;
   }
 
-  /* Staggered animation delays */
   .cards .card:nth-child(1) { animation-delay: 0.04s; }
   .cards .card:nth-child(2) { animation-delay: 0.08s; }
   .cards .card:nth-child(3) { animation-delay: 0.12s; }
@@ -205,8 +195,107 @@
   .cards-row2 .card:nth-child(3) { animation-delay: 0.28s; }
   .cards-row2 .card:nth-child(4) { animation-delay: 0.32s; }
 
-  .cards-row2 {
+  /* ── PÓDIO ── */
+  .podium-section {
     margin-bottom: 24px;
+    animation: fadeUp 0.5s 0.36s both;
+  }
+
+  .podium-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .podium-card {
+    flex: 1;
+    max-width: 340px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px 20px 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .podium-card:hover { transform: translateY(-3px); }
+
+  .podium-card.rank-1 { border-color: rgba(245,200,66,0.3); padding-top: 40px; }
+  .podium-card.rank-2 { border-color: rgba(176,184,200,0.2); }
+  .podium-card.rank-3 { border-color: rgba(205,127,69,0.2); }
+
+  .podium-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .podium-card.rank-1::after { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .podium-card.rank-2::after { background: linear-gradient(90deg, transparent, var(--silver), transparent); }
+  .podium-card.rank-3::after { background: linear-gradient(90deg, transparent, var(--bronze), transparent); }
+
+  .podium-medal {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .podium-day {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .podium-score {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .podium-card.rank-1 .podium-score { color: var(--gold); }
+  .podium-card.rank-2 .podium-score { color: var(--silver); }
+  .podium-card.rank-3 .podium-score { color: var(--bronze); }
+
+  .podium-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .podium-stats {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    padding: 16px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .podium-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .podium-stat-val {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
   }
 
   /* Chart */
@@ -215,7 +304,7 @@
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 32px;
-    animation: fadeUp 0.5s 0.36s both;
+    animation: fadeUp 0.5s 0.44s both;
   }
 
   .chart-header {
@@ -261,6 +350,8 @@
 
   @media (max-width: 900px) {
     .cards, .cards-row2 { grid-template-columns: repeat(2, 1fr); }
+    .podium-stage { flex-direction: column; align-items: center; }
+    .podium-card { max-width: 100%; width: 100%; }
   }
   @media (max-width: 560px) {
     .container { padding: 28px 20px; }
@@ -333,6 +424,13 @@
     </div>
   </div>
 
+  <div class="section-label">Pódio de Desempenho</div>
+  <div class="podium-section">
+    <div class="podium-stage" id="podium">
+      <div style="color:var(--muted); font-size:14px; padding:40px 0; width:100%; text-align:center;">Aguardando dados...</div>
+    </div>
+  </div>
+
   <div class="chart-section">
     <div class="chart-header">
       <h3>Evolução das Visualizações de Perfil</h3>
@@ -341,29 +439,18 @@
     <canvas id="viewsChart"></canvas>
   </div>
 
-  <div class="podium-section">
-    <div class="chart-header" style="margin-bottom: 24px;">
-      <h3 style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;">🏆 Pódio de Desempenho</h3>
-      <span class="chart-badge">Top 3 dias</span>
-    </div>
-    <div class="podium" id="podium">
-      <div class="podium-empty">Aguardando dados...</div>
-    </div>
-  </div>
-
   <footer>Atualização automática a cada 30 segundos &middot; Nuvant &copy; 2025</footer>
 </div>
 
 <script>
-// Columns: A=likes(0), B=saves(1), C=shares(2), D=comments(3), E=views(4), F=followers(5), G=reach(6), H=clicks(7)
+// Cols: A=likes(0) B=saves(1) C=shares(2) D=comments(3) E=views(4) F=followers(5) G=reach(6) H=clicks(7)
 const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv";
 let data = [];
 let chart;
 
 function setStatus(text, type) {
   const pill = document.getElementById("status");
-  const label = document.getElementById("status-text");
-  label.innerText = text;
+  document.getElementById("status-text").innerText = text;
   pill.className = "status-pill " + (type || "");
 }
 
@@ -373,9 +460,10 @@ async function fetchData() {
     const response = await fetch(sheetURL);
     const text = await response.text();
     const rows = text.trim().split("\n").slice(1);
-    data = rows.map(row => {
+    data = rows.map((row, i) => {
       const cols = row.split(",");
       return {
+        day:       i + 1,
         likes:     +cols[0] || 0,
         saves:     +cols[1] || 0,
         shares:    +cols[2] || 0,
@@ -385,8 +473,15 @@ async function fetchData() {
         reach:     +cols[6] || 0,
         clicks:    +cols[7] || 0,
       };
-    }).filter(d => Object.values(d).some(v => v !== 0));
+    }).filter(d => Object.values(d).some((v, i) => i > 0 && v !== 0));
+
+    // Engagement score = sum of interaction metrics
+    data.forEach(d => {
+      d.score = d.likes + d.saves + d.shares + d.comments + d.clicks;
+    });
+
     renderCards();
+    renderPodium();
     renderChart();
     setStatus("Atualizado ✓", "ok");
   } catch (error) {
@@ -395,7 +490,7 @@ async function fetchData() {
   }
 }
 
-function fmt(n) { return n.toLocaleString('pt-BR'); }
+function fmt(n) { return (+n).toLocaleString('pt-BR'); }
 
 function renderCards() {
   if (!data.length) return;
@@ -410,9 +505,58 @@ function renderCards() {
   document.getElementById("clicks").innerText    = fmt(last.clicks);
 }
 
+function renderPodium() {
+  if (!data.length) return;
+  const medals = ["🥇","🥈","🥉"];
+  const ranks  = ["rank-1","rank-2","rank-3"];
+
+  // Sort by score descending, take top 3
+  const top3 = [...data].sort((a, b) => b.score - a.score).slice(0, 3);
+
+  // Visual order: 2nd | 1st | 3rd
+  const visualOrder = top3.length >= 3
+    ? [top3[1], top3[0], top3[2]]
+    : top3;
+  const rankIndex = top3.length >= 3 ? [1, 0, 2] : [0, 1, 2];
+
+  const podium = document.getElementById("podium");
+  podium.innerHTML = "";
+
+  visualOrder.forEach((d, i) => {
+    const ri = rankIndex[i];
+    const card = document.createElement("div");
+    card.className = `podium-card ${ranks[ri]}`;
+    card.innerHTML = `
+      <div class="podium-medal">${medals[ri]}</div>
+      <div class="podium-day">Dia ${d.day}</div>
+      <div class="podium-score">${fmt(d.score)}</div>
+      <div class="podium-label">pontos de engajamento</div>
+      <div class="podium-stats">
+        <div>
+          <span class="podium-stat-label">❤️ Likes</span>
+          <span class="podium-stat-val">${fmt(d.likes)}</span>
+        </div>
+        <div>
+          <span class="podium-stat-label">🔖 Salvamentos</span>
+          <span class="podium-stat-val">${fmt(d.saves)}</span>
+        </div>
+        <div>
+          <span class="podium-stat-label">🔁 Compartilh.</span>
+          <span class="podium-stat-val">${fmt(d.shares)}</span>
+        </div>
+        <div>
+          <span class="podium-stat-label">💬 Comentários</span>
+          <span class="podium-stat-val">${fmt(d.comments)}</span>
+        </div>
+      </div>
+    `;
+    podium.appendChild(card);
+  });
+}
+
 function renderChart() {
   const ctx = document.getElementById("viewsChart").getContext("2d");
-  const labels = data.map((_, i) => `Dia ${i + 1}`);
+  const labels = data.map(d => `Dia ${d.day}`);
   const values = data.map(d => d.views);
   if (chart) chart.destroy();
 
