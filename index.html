@@ -16,7 +16,6 @@
     --surface2: #1e1e24;
     --border: rgba(255,255,255,0.06);
     --accent: #c8f04a;
-    --accent2: #a8d638;
     --text: #f0ede8;
     --muted: #7a7880;
     --danger: #ff5f5f;
@@ -32,7 +31,6 @@
     overflow-x: hidden;
   }
 
-  /* Background noise texture */
   body::before {
     content: '';
     position: fixed;
@@ -43,7 +41,6 @@
     opacity: 0.4;
   }
 
-  /* Radial glow */
   body::after {
     content: '';
     position: fixed;
@@ -64,17 +61,14 @@
     padding: 48px 40px;
   }
 
-  /* Header */
   header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    margin-bottom: 56px;
+    margin-bottom: 48px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--border);
   }
-
-  .logo-block {}
 
   .logo-label {
     font-size: 11px;
@@ -90,7 +84,6 @@
     font-size: 42px;
     font-weight: 400;
     line-height: 1;
-    color: var(--text);
     letter-spacing: -0.5px;
   }
 
@@ -99,7 +92,6 @@
     color: var(--accent);
   }
 
-  /* Status pill */
   .status-pill {
     display: inline-flex;
     align-items: center;
@@ -111,7 +103,6 @@
     font-size: 12px;
     font-weight: 500;
     color: var(--muted);
-    letter-spacing: 0.02em;
     transition: all 0.3s;
   }
 
@@ -128,19 +119,30 @@
   .status-pill.err .status-dot { background: var(--danger); }
   .status-pill.err { color: var(--danger); }
 
-  /* Cards grid */
+  /* Section labels */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  /* Cards grid — 4 cols */
   .cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 14px;
+    margin-bottom: 14px;
   }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 24px;
+    border-radius: 18px;
+    padding: 24px 20px;
     position: relative;
     overflow: hidden;
     transition: border-color 0.25s, transform 0.2s;
@@ -152,11 +154,10 @@
     transform: translateY(-2px);
   }
 
-  /* Accent line on top */
   .card::before {
     content: '';
     position: absolute;
-    top: 0; left: 24px; right: 24px;
+    top: 0; left: 20px; right: 20px;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
     opacity: 0;
@@ -164,48 +165,57 @@
   }
   .card:hover::before { opacity: 1; }
 
-  .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.1s; }
-  .card:nth-child(3) { animation-delay: 0.15s; }
-  .card:nth-child(4) { animation-delay: 0.2s; }
-
   .card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
     background: rgba(200,240,74,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    font-size: 16px;
+    margin-bottom: 16px;
+    font-size: 15px;
   }
 
   .card h3 {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .card p {
     font-family: 'DM Serif Display', serif;
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 400;
     color: var(--text);
     line-height: 1;
     letter-spacing: -1px;
   }
 
-  /* Chart section */
+  /* Staggered animation delays */
+  .cards .card:nth-child(1) { animation-delay: 0.04s; }
+  .cards .card:nth-child(2) { animation-delay: 0.08s; }
+  .cards .card:nth-child(3) { animation-delay: 0.12s; }
+  .cards .card:nth-child(4) { animation-delay: 0.16s; }
+  .cards-row2 .card:nth-child(1) { animation-delay: 0.20s; }
+  .cards-row2 .card:nth-child(2) { animation-delay: 0.24s; }
+  .cards-row2 .card:nth-child(3) { animation-delay: 0.28s; }
+  .cards-row2 .card:nth-child(4) { animation-delay: 0.32s; }
+
+  .cards-row2 {
+    margin-bottom: 24px;
+  }
+
+  /* Chart */
   .chart-section {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 32px;
-    animation: fadeUp 0.5s 0.25s both;
+    animation: fadeUp 0.5s 0.36s both;
   }
 
   .chart-header {
@@ -219,7 +229,6 @@
     font-family: 'DM Serif Display', serif;
     font-size: 22px;
     font-weight: 400;
-    color: var(--text);
   }
 
   .chart-badge {
@@ -234,17 +243,14 @@
     padding: 5px 12px;
   }
 
-  canvas {
-    max-height: 300px;
-  }
+  canvas { max-height: 280px; }
 
-  /* Footer */
   footer {
     text-align: center;
     margin-top: 40px;
     font-size: 12px;
     color: var(--muted);
-    opacity: 0.6;
+    opacity: 0.5;
     letter-spacing: 0.05em;
   }
 
@@ -254,13 +260,13 @@
   }
 
   @media (max-width: 900px) {
-    .cards { grid-template-columns: repeat(2, 1fr); }
+    .cards, .cards-row2 { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 560px) {
     .container { padding: 28px 20px; }
     h1 { font-size: 30px; }
-    .cards { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .card p { font-size: 30px; }
+    .cards, .cards-row2 { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card p { font-size: 28px; }
     header { flex-direction: column; align-items: flex-start; gap: 16px; }
   }
 </style>
@@ -279,11 +285,17 @@
     </div>
   </header>
 
+  <div class="section-label">Engajamento</div>
   <div class="cards">
     <div class="card">
-      <div class="card-icon">👥</div>
-      <h3>Seguidores</h3>
-      <p id="followers">—</p>
+      <div class="card-icon">❤️</div>
+      <h3>Likes / Dia</h3>
+      <p id="likes">—</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔖</div>
+      <h3>Salvamentos</h3>
+      <p id="saves">—</p>
     </div>
     <div class="card">
       <div class="card-icon">🔁</div>
@@ -291,14 +303,33 @@
       <p id="shares">—</p>
     </div>
     <div class="card">
+      <div class="card-icon">💬</div>
+      <h3>Comentários</h3>
+      <p id="comments">—</p>
+    </div>
+  </div>
+
+  <div class="section-label">Alcance & Crescimento</div>
+  <div class="cards cards-row2">
+    <div class="card">
       <div class="card-icon">👁</div>
       <h3>Visualizações Perfil</h3>
       <p id="views">—</p>
     </div>
     <div class="card">
+      <div class="card-icon">👥</div>
+      <h3>Seguidores</h3>
+      <p id="followers">—</p>
+    </div>
+    <div class="card">
       <div class="card-icon">📡</div>
       <h3>Contas Alcançadas</h3>
       <p id="reach">—</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <h3>Cliques no Link</h3>
+      <p id="clicks">—</p>
     </div>
   </div>
 
@@ -314,6 +345,7 @@
 </div>
 
 <script>
+// Columns: A=likes(0), B=saves(1), C=shares(2), D=comments(3), E=views(4), F=followers(5), G=reach(6), H=clicks(7)
 const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyN6Y6qy-5U1puyFlv8zWfEvmutxT-MA0sn-GLXgp2qKmuGboCwNVvh5nHdIfMKgzFGl5X-jNIliXp/pub?output=csv";
 let data = [];
 let chart;
@@ -334,10 +366,14 @@ async function fetchData() {
     data = rows.map(row => {
       const cols = row.split(",");
       return {
-        views: +cols[4] || 0,
+        likes:     +cols[0] || 0,
+        saves:     +cols[1] || 0,
+        shares:    +cols[2] || 0,
+        comments:  +cols[3] || 0,
+        views:     +cols[4] || 0,
         followers: +cols[5] || 0,
-        shares: +cols[2] || 0,
-        reach: +cols[6] || 0
+        reach:     +cols[6] || 0,
+        clicks:    +cols[7] || 0,
       };
     }).filter(d => Object.values(d).some(v => v !== 0));
     renderCards();
@@ -349,32 +385,37 @@ async function fetchData() {
   }
 }
 
+function fmt(n) { return n.toLocaleString('pt-BR'); }
+
 function renderCards() {
   if (!data.length) return;
   const last = data[data.length - 1];
-  document.getElementById("followers").innerText = last.followers.toLocaleString('pt-BR');
-  document.getElementById("shares").innerText = last.shares.toLocaleString('pt-BR');
-  document.getElementById("views").innerText = last.views.toLocaleString('pt-BR');
-  document.getElementById("reach").innerText = last.reach.toLocaleString('pt-BR');
+  document.getElementById("likes").innerText     = fmt(last.likes);
+  document.getElementById("saves").innerText     = fmt(last.saves);
+  document.getElementById("shares").innerText    = fmt(last.shares);
+  document.getElementById("comments").innerText  = fmt(last.comments);
+  document.getElementById("views").innerText     = fmt(last.views);
+  document.getElementById("followers").innerText = fmt(last.followers);
+  document.getElementById("reach").innerText     = fmt(last.reach);
+  document.getElementById("clicks").innerText    = fmt(last.clicks);
 }
 
 function renderChart() {
   const ctx = document.getElementById("viewsChart").getContext("2d");
-  const labels = data.map((_, index) => `Dia ${index + 1}`);
+  const labels = data.map((_, i) => `Dia ${i + 1}`);
   const values = data.map(d => d.views);
   if (chart) chart.destroy();
 
   chart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: labels,
+      labels,
       datasets: [{
         label: "Visualizações de Perfil",
         data: values,
         borderColor: "#c8f04a",
         backgroundColor: (context) => {
-          const chart = context.chart;
-          const { ctx: c, chartArea } = chart;
+          const { ctx: c, chartArea } = context.chart;
           if (!chartArea) return "transparent";
           const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
           gradient.addColorStop(0, "rgba(200,240,74,0.18)");
